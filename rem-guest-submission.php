@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: REM - Guest Submission
- * Plugin URI: https://webcodingplace.com/real-estate-manager-wordpress-plugin/
- * Description: Enables guests to submit listings.
- * Version: 1.0.0
+ * Plugin URI: https://wp-rem.com/addons/rem-guest-submission/
+ * Description: Enables visitors/non-logged-in users to submit listings.
+ * Version: 1.2
  * Author: WebCodingPlace
  * Author URI: https://webcodingplace.com/
  * License: GPLv2 or later
@@ -129,14 +129,14 @@ class RemGuestUserAddon {
         }
         die();
     }
-    function insert_property_in_db($property_id = '', $data,  $status = 'draft'){
+    function insert_property_in_db($property_id = '', $data = array(),  $status = 'draft'){
         $user = get_user_by( 'email', $data['rem_user_email'] );
 
         // if user already hase account get the user id form there
         // if not create new user
         if ($user) {
             $user_id = $user->ID;
-        }else {
+        } else {
             global $rem_emails_manager;
             $password = $this->generatePassword(6,8);
             $user_id = wp_create_user( $data['rem_user_email'],$password, $data['rem_user_email'] );
@@ -442,3 +442,4 @@ if( class_exists('RemGuestUserAddon')){
         );
     }
 }
+?>

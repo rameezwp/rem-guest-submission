@@ -50,10 +50,13 @@
 	
 					<?php
 						global $rem_ob;
-						$inputFields = $rem_ob->get_all_property_fields();
+						global $rem_sc_ob;
+						$inputFields = $rem_ob->single_property_fields();
 						$tabsData = rem_get_single_property_settings_tabs();
 				        $valid_tabs = array();
-				        foreach ($tabsData as $tab_key => $tab_title) {
+				        foreach ($tabsData as $tabData) {
+				        	$tab_key = $tabData['key'];
+				        	$tab_title = $tabData['title'];
 				            foreach ($inputFields as $field) {
 				                $field_tab = (isset($field['tab'])) ? $field['tab'] : '' ;
 				                if ($tab_key == $field_tab && !in_array($field_tab, $valid_tabs)) {
@@ -61,7 +64,9 @@
 				                }
 				            }
 				        }
-						foreach ($tabsData as $name => $title) {
+						foreach ($tabsData as $tabData) {
+							$name = $tabData['key'];
+							$title = $tabData['title'];
 							if ( $name == 'property_attachments_jh') { ?>
 								<div class="info-block" id="<?php echo $name; ?>">
 								<div class="section-title line-style">
@@ -80,17 +85,17 @@
 
 								</div>
 							</div>
-							<?php }else if(in_array($name, $valid_tabs)) { ?>
-							<div class="info-block" id="<?php echo $name; ?>">
+							<?php } elseif (in_array($name, $valid_tabs) && rem_is_tab_accessible($tabData)) { ?>
+							<div class="info-block" id="<?php echo esc_attr($name); ?>">
 								<div class="section-title line-style">
-									<h3 class="title"><?php echo $title; ?></h3>
+									<h3 class="title"><?php echo esc_attr($title); ?></h3>
 								</div>
 
-								<div class="row property-meta-fields <?php echo $name; ?>-fields">
+								<div class="row property-meta-fields <?php echo esc_attr($name); ?>-fields">
 									<?php
 										foreach ($inputFields as $field) {
-											if($field['tab'] == $name && $field['accessibility'] != 'disable'){
-												$this->render_property_field($field);
+											if($field['tab'] == $name && rem_is_field_accessible($field)  && $field['type'] != 'upload'){
+												$rem_sc_ob->render_property_field($field);
 											}
 										}
 									?>
@@ -197,6 +202,9 @@
     background-color: #ffffff;
     color: #777;
     padding: 10px;
+}
+#image-upload-btn-area label {
+	margin: 5px;
 }
 #accordion .ui-accordion-content p {
     margin: 0;
